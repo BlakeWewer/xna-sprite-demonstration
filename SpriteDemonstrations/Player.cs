@@ -12,7 +12,7 @@ namespace SpriteDemonstrations
     /// <summary>
     /// An enum representing the states the player can be in
     /// </summary>
-    enum State
+    public enum State
     {
         South = 0,
         East = 1, 
@@ -49,10 +49,11 @@ namespace SpriteDemonstrations
         // Private variables
         Game1 game;
         Texture2D texture;
-        State state;
+        public State state;
         TimeSpan timer;
         int frame;
-        Vector2 position;
+        public BoundingRectangle Bounds;
+        public Vector2 Position;
         SpriteFont font;
 
         /// <summary>
@@ -63,7 +64,11 @@ namespace SpriteDemonstrations
         {
             this.game = game;
             timer = new TimeSpan(0);
-            position = new Vector2(200, 200);
+            Position = new Vector2(600, 200);
+            Bounds.X = Position.X;
+            Bounds.Y = Position.Y;
+            Bounds.Height = FRAME_HEIGHT;
+            Bounds.Width = FRAME_WIDTH;
             state = State.Idle;
         }
 
@@ -89,22 +94,22 @@ namespace SpriteDemonstrations
             if (keyboard.IsKeyDown(Keys.Up))
             {
                 state = State.North;
-                position.Y -= delta * PLAYER_SPEED;
+                Position.Y -= delta * PLAYER_SPEED;
             }
             else if (keyboard.IsKeyDown(Keys.Left))
             {
                 state = State.West;
-                position.X -= delta * PLAYER_SPEED;
+                Position.X -= delta * PLAYER_SPEED;
             }
             else if (keyboard.IsKeyDown(Keys.Right))
             {
                 state = State.East;
-                position.X += delta * PLAYER_SPEED;
+                Position.X += delta * PLAYER_SPEED;
             }
             else if (keyboard.IsKeyDown(Keys.Down))
             {
                 state = State.South;
-                position.Y += delta * PLAYER_SPEED;
+                Position.Y += delta * PLAYER_SPEED;
             }
             else state = State.Idle;
 
@@ -120,7 +125,8 @@ namespace SpriteDemonstrations
                 // reduce the timer by one frame duration
                 timer -= new TimeSpan(0, 0, 0, 0, ANIMATION_FRAME_RATE);
             }
-
+            Bounds.X = Position.X;
+            Bounds.Y = Position.Y;
             // Keep the frame within bounds (there are four frames)
             frame %= 4;
         }
@@ -140,10 +146,11 @@ namespace SpriteDemonstrations
                 );
 
             // render the sprite
-            spriteBatch.Draw(texture, position, source, Color.White);
+            spriteBatch.Draw(texture, Bounds, source, Color.White);
 
             // render the sprite's coordinates in the upper-right-hand corner of the screen
-            spriteBatch.DrawString(font, $"X:{position.X} Y:{position.Y}", Vector2.Zero, Color.White);
+            spriteBatch.DrawString(font, $"X:{Position.X} Y:{Position.Y}", Vector2.Zero, Color.White);
+            spriteBatch.DrawString(font, $"X:400 Y:300", new Vector2(0, 30), Color.White);
         }
 
     }

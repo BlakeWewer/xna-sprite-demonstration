@@ -13,6 +13,8 @@ namespace SpriteDemonstrations
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
         Player player;
+        public BoundingRectangle box;
+        Texture2D pixel;
 
         public Game1()
         {
@@ -29,8 +31,14 @@ namespace SpriteDemonstrations
         /// </summary>
         protected override void Initialize()
         {
+            graphics.PreferredBackBufferWidth = 1042;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.ApplyChanges();
             // TODO: Add your initialization logic here
-
+            box.X = 400;
+            box.Y = 300;
+            box.Width = 200;
+            box.Height = 200;
             base.Initialize();
         }
 
@@ -44,6 +52,7 @@ namespace SpriteDemonstrations
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player.LoadContent();
             spriteFont = Content.Load<SpriteFont>("defaultFont");
+            pixel = Content.Load<Texture2D>("pixel");
             // TODO: use this.Content to load your game content here
         }
 
@@ -68,7 +77,31 @@ namespace SpriteDemonstrations
 
             // TODO: Add your update logic here
             player.Update(gameTime);
-            var size = spriteFont.MeasureString("Hello World");
+//            var size = spriteFont.MeasureString("Hello World");
+
+            if(player.Bounds.CollidesWith(box))
+            {
+                float delta;
+                switch(player.state)
+                {
+                    case State.East:
+                        delta = (player.Bounds.X + player.Bounds.Width) - box.X;
+                        player.Position.X = box.X - player.Bounds.Width - delta;
+                        break;
+                    case State.North:
+                        delta = (box.Y + box.Height) - player.Bounds.Y;
+                        player.Position.Y = box.Y + box.Height + delta;
+                        break;
+                    case State.West:
+                        delta = (box.X + box.Width) - player.Bounds.X;
+                        player.Position.X = box.X + box.Width + delta + 1;
+                        break;
+                    case State.South:
+                        delta = (player.Bounds.Y + player.Bounds.Height) - box.Y;
+                        player.Position.Y = box.Y - player.Bounds.Height - delta;
+                        break;
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -83,7 +116,7 @@ namespace SpriteDemonstrations
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-
+            spriteBatch.Draw(pixel, box, Color.White);
             spriteBatch.DrawString(
                 spriteFont,
                 "Hello World",
